@@ -28,14 +28,34 @@ async function postOrderUpdate(req, res) {
           message: `Order with id = ${orderID} is already in progress`,
         });
       }
-      const values = ["in_progress", "now()", orderID];
+      if (currentStatus === "completed") {
+        return res.status(400).json({
+          message: `Order with id = ${orderID} is already completed`,
+        });
+      }
+      const valuesUpdateOrder = ["in_progress", "now()", orderID];
       const queryUpdateOrder = `
           UPDATE "Orders"
           SET status = $1,
               start_time = $2
           WHERE id = $3;    
       `;
-      await pool.query(queryUpdateOrder, values);
+      await pool.query(queryUpdateOrder, valuesUpdateOrder);
+      const valuesUpdateTrucks = ["in_use", orderID];
+      const queryUpdateTrucks = `
+          UPDATE "Trucks" AS t
+          SET status = $1
+          WHERE EXISTS (
+            SELECT 1
+            FROM "Assignments" AS a
+            WHERE a.truck_id = t.id
+              AND a.order_id = $2 
+          );
+      `;
+
+      console.log("Query:", queryUpdateTrucks);
+      console.log("Values:", valuesUpdateTrucks);
+      await pool.query(queryUpdateTrucks, valuesUpdateTrucks);
       return res
         .status(200)
         .json({ message: `Order with id = ${orderID} is in progress` });
