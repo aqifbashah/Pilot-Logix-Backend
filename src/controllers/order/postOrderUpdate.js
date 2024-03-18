@@ -52,6 +52,9 @@ async function postOrderUpdate(req, res) {
               AND a.order_id = $2 
           );
       `;
+
+      console.log("Query:", queryUpdateTrucks);
+      console.log("Values:", valuesUpdateTrucks);
       await pool.query(queryUpdateTrucks, valuesUpdateTrucks);
       return res
         .status(200)
