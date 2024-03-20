@@ -37,6 +37,7 @@ async function postAdminLogin(req, res) {
       email: response.rows[0].email,
       first_name: response.rows[0].first_name,
       last_name: response.rows[0].last_name,
+      position: response.rows[0].position,
       is_superadmin: response.rows[0].is_superadmin,
       role: role,
     };
