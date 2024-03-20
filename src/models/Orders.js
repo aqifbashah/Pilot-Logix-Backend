@@ -34,7 +34,7 @@ export async function createOrdersTable() {
 
   const queryAlter = `
       ALTER TABLE "Orders"
-      ALTER COLUMN start_time TYPE TIMESTAMP
+      ALTER COLUMN start_time TYPE TIMESTAMP,
       ALTER COLUMN end_time TYPE TIMESTAMP;
   `;
 
