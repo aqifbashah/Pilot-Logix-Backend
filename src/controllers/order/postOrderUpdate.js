@@ -33,7 +33,11 @@ async function postOrderUpdate(req, res) {
           message: `Order with id = ${orderID} is already completed`,
         });
       }
-      const valuesUpdateOrder = ["in_progress", "now()", orderID];
+      const valuesUpdateOrder = [
+        "in_progress",
+        "now() AT TIME ZONE 'GMT+8'",
+        orderID,
+      ];
       const queryUpdateOrder = `
           UPDATE "Orders"
           SET status = $1,
