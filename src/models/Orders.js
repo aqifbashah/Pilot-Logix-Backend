@@ -34,8 +34,8 @@ export async function createOrdersTable() {
 
   const queryAlter = `
       ALTER TABLE "Orders"
-      ALTER COLUMN start_time TYPE TIMESTAMP,
-      ALTER COLUMN end_time TYPE TIMESTAMP;
+      ALTER COLUMN start_time TYPE TIMESTAMP USING start_time::timestamp without time zone,
+      ALTER COLUMN end_time TYPE TIMESTAMP USING start_time::timestamp without time zone;
   `;
 
   await pool.query(query).then(() => {
