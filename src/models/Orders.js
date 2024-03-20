@@ -32,19 +32,10 @@ export async function createOrdersTable() {
     );
     `;
 
-  const queryAlter = `
-      ALTER TABLE "Orders"
-      ALTER COLUMN start_time TYPE TIMESTAMP USING start_time::timestamp without time zone,
-      ALTER COLUMN end_time TYPE TIMESTAMP USING start_time::timestamp without time zone;
-  `;
-
-  await pool.query(query).then(() => {
-    console.log("Orders table created");
-  });
   await pool
-    .query(queryAlter)
+    .query(query)
     .then(() => {
-      console.log("Orders table altered");
+      console.log("Orders table created");
     })
     .catch((err) => {
       console.log(err);
