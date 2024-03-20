@@ -62,7 +62,7 @@ async function getAllAssignments(req, res) {
       d2_last_name: row.d2_last_name,
       driver3_id: row.driver3_id,
       d3_first_name: row.d3_first_name,
-      d3_last_name: row.d3_last_name3,
+      d3_last_name: row.d3_last_name,
       order_id: row.order_id,
       pickup_loc: row.pickup_loc,
       dropoff_loc: row.dropoff_loc,
