@@ -14,7 +14,7 @@ export async function createAdminsTable() {
     );
     `;
 
-  pool
+  await pool
     .query(query)
     .then(() => {
       console.log("Admins table created");

@@ -15,7 +15,7 @@ export async function createAssignmentsTable() {
     );
     `;
 
-  pool
+  await pool
     .query(query)
     .then(() => {
       console.log("Assignments table created");

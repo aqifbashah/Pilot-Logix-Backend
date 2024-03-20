@@ -14,7 +14,7 @@ export async function createDriversTable() {
     );
     `;
 
-  pool
+  await pool
     .query(query)
     .then(() => {
       console.log("Drivers table created");

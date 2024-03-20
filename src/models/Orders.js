@@ -8,7 +8,7 @@ export async function createOrderStatusType() {
         WHEN duplicate_object THEN null;
         END $$;`;
 
-  pool
+  await pool
     .query(query)
     .then(() => {
       console.log("OrderStatus type created");
@@ -32,10 +32,19 @@ export async function createOrdersTable() {
     );
     `;
 
-  pool
-    .query(query)
+  const queryAlter = `
+  ALTER TABLE "Orders"
+  ALTER COLUMN start_time SET TIMESTAMP
+  ALTER COLUMN end_time SET TIMESTAMP
+  `;
+
+  await pool.query(query).then(() => {
+    console.log("Orders table created");
+  });
+  await pool
+    .query(queryAlter)
     .then(() => {
-      console.log("Orders table created");
+      console.log("Orders table altered");
     })
     .catch((err) => {
       console.log(err);

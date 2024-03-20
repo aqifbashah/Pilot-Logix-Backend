@@ -8,7 +8,7 @@ export async function createTruckStatusType() {
         WHEN duplicate_object THEN null;
         END $$;`;
 
-  pool
+  await pool
     .query(query)
     .then(() => {
       console.log("TruckStatus type created");
@@ -29,7 +29,7 @@ export async function createTrucksTable() {
     );
     `;
 
-  pool
+  await pool
     .query(query)
     .then(() => {
       console.log("Trucks table created");
