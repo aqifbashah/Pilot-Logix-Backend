@@ -7,8 +7,8 @@ async function getAllOrders(req, res) {
     `;
     const response = await pool.query(query);
 
-    // construct an array to hold the Drivers data
-    const trucksData = response.rows.map((row) => ({
+    // construct an array to hold the Orders data
+    const ordersData = response.rows.map((row) => ({
       id: row.id,
       created_at: row.created_at,
       pickup_loc: row.pickup_loc,
@@ -19,7 +19,7 @@ async function getAllOrders(req, res) {
       end_time: row.end_time,
     }));
 
-    res.status(200).json(trucksData);
+    res.status(200).json(ordersData);
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
     console.error("Error in getAllOrders:", error);
