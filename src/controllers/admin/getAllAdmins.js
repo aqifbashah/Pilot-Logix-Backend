@@ -7,7 +7,7 @@ async function getAllAdmins(req, res) {
     `;
     const response = await pool.query(query);
 
-    // construct an array to hold the Drivers data
+    // construct an array to hold the Admins data
     const adminsData = response.rows.map((row) => ({
       id: row.id,
       created_at: row.created_at,
