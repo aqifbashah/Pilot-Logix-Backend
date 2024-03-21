@@ -11,7 +11,7 @@ async function getAllOrders(req, res) {
     const trucksData = response.rows.map((row) => ({
       id: row.id,
       created_at: row.created_at,
-      pickup_loc: row.picup_loc,
+      pickup_loc: row.pickup_loc,
       dropoff_loc: row.dropoff_loc,
       status: row.status,
       trip_rate: row.trip_rate,
