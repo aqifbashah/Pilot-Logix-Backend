@@ -7,22 +7,29 @@ async function getAllDrivers(req, res) {
       .toISOString()
       .split("T")[0];
 
-    // Query to get all drivers and their assignments for today
+    // Query to get assignments for each driver and their status
     const query = `
-      SELECT d.id, d.created_at, d.first_name, d.last_name, d.ic_num, d.email,
-      CASE 
-        WHEN '${todayDate}' BETWEEN DATE(a.assignment_date) AND DATE(a.assignment_date) THEN 'assigned'
-        ELSE 'available'
-      END AS status
-      FROM "Drivers" d
-      LEFT JOIN (
-        SELECT DISTINCT driver1_id AS driver_id FROM "Assignments"
-        UNION
-        SELECT DISTINCT driver2_id AS driver_id FROM "Assignments"
-        UNION
-        SELECT DISTINCT driver3_id AS driver_id FROM "Assignments"
-      ) AS assigned_drivers ON d.id = assigned_drivers.driver_id
-      LEFT JOIN "Assignments" a ON assigned_drivers.driver_id = a.driver1_id OR assigned_drivers.driver_id = a.driver2_id OR assigned_drivers.driver_id = a.driver3_id
+      SELECT
+        d.id,
+        d.created_at,
+        d.first_name,
+        d.last_name,
+        d.ic_num,
+        d.email,
+        CASE
+          WHEN '${todayDate}' BETWEEN DATE(a1.assignment_date) AND DATE(a1.assignment_date) THEN 'assigned'
+          WHEN '${todayDate}' BETWEEN DATE(a2.assignment_date) AND DATE(a2.assignment_date) THEN 'assigned'
+          WHEN '${todayDate}' BETWEEN DATE(a3.assignment_date) AND DATE(a3.assignment_date) THEN 'assigned'
+          ELSE 'available'
+        END AS status
+      FROM
+        "Drivers" d
+      LEFT JOIN
+        "Assignments" a1 ON d.id = a1.driver1_id
+      LEFT JOIN
+        "Assignments" a2 ON d.id = a2.driver2_id
+      LEFT JOIN
+        "Assignments" a3 ON d.id = a3.driver3_id
     `;
 
     // Execute the query
