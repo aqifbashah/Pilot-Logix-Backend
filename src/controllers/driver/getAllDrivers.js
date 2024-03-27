@@ -7,46 +7,42 @@ async function getAllDrivers(req, res) {
       .toISOString()
       .split("T")[0];
 
-    // Query to get assignments for each driver and their status
-    const query = `
-      SELECT
-        d.id,
-        d.created_at,
-        d.first_name,
-        d.last_name,
-        d.ic_num,
-        d.email,
-        CASE
-          WHEN '${todayDate}' BETWEEN DATE(a1.assignment_date) AND DATE(a1.assignment_date) THEN 'assigned'
-          WHEN '${todayDate}' BETWEEN DATE(a2.assignment_date) AND DATE(a2.assignment_date) THEN 'assigned'
-          WHEN '${todayDate}' BETWEEN DATE(a3.assignment_date) AND DATE(a3.assignment_date) THEN 'assigned'
-          ELSE 'available'
-        END AS status
-      FROM
-        "Drivers" d
-      LEFT JOIN
-        "Assignments" a1 ON d.id = a1.driver1_id
-      LEFT JOIN
-        "Assignments" a2 ON d.id = a2.driver2_id
-      LEFT JOIN
-        "Assignments" a3 ON d.id = a3.driver3_id
+    // Query to get all drivers
+    const driversQuery = `
+      SELECT id, created_at, first_name, last_name, ic_num, email
+      FROM "Drivers"
     `;
 
-    // Execute the query
-    const response = await pool.query(query);
+    // Execute the query to get all drivers
+    const driversResponse = await pool.query(driversQuery);
+    const drivers = driversResponse.rows;
 
-    // Construct an array to hold the Drivers data with their status
-    const driversData = response.rows.map((row) => ({
-      id: row.id,
-      created_at: row.created_at,
-      first_name: row.first_name,
-      last_name: row.last_name,
-      ic_num: row.ic_num,
-      email: row.email,
-      status: row.status, // Add the 'status' field to the response
-    }));
+    // Iterate through each driver to check their assignments
+    for (let i = 0; i < drivers.length; i++) {
+      const driver = drivers[i];
 
-    res.status(200).json(driversData);
+      // Query to check the assignment status for the current driver
+      const assignmentQuery = `
+        SELECT 
+          CASE
+            WHEN '${todayDate}' BETWEEN DATE(assignment_date) AND DATE(assignment_date) THEN 'assigned'
+            ELSE 'available'
+          END AS status
+        FROM "Assignments"
+        WHERE ${driver.id} IN (driver1_id, driver2_id, driver3_id)
+        LIMIT 1
+      `;
+
+      // Execute the query to check the assignment status
+      const assignmentResponse = await pool.query(assignmentQuery);
+      const assignment = assignmentResponse.rows[0];
+
+      // Add the assignment status to the current driver
+      driver.status = assignment ? assignment.status : "available";
+    }
+
+    // Send the response with all drivers and their assignment status
+    res.status(200).json(drivers);
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
     console.error("Error in getAllDrivers:", error);
