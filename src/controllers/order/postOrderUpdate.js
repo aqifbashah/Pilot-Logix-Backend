@@ -72,6 +72,18 @@ async function postOrderUpdate(req, res) {
         WHERE id = $3;    
     `;
     await pool.query(queryUpdateOrder, values);
+    const valuesUpdateTrucks = ["available", orderID];
+    const queryUpdateTrucks = `
+        UPDATE "Trucks" AS t
+        SET status = $1
+        WHERE EXISTS (
+          SELECT 1
+          FROM "Assignments" AS a
+          WHERE a.truck_id = t.id
+            AND a.order_id = $2 
+        );
+    `;
+    await pool.query(queryUpdateTrucks, valuesUpdateTrucks);
     return res
       .status(200)
       .json({ message: `Order with id = ${orderID} is completed` });
